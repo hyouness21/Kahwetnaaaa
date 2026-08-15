@@ -916,6 +916,22 @@ header {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.log-form .opener-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.log-form .log-btn {
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .log-form .log-btn {
+    width: auto;
+  }
 }
 
 .opener-input {

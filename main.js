@@ -341,13 +341,23 @@ if (namesGrid) {
   let editingDocId = null;
 
   async function getPeople() {
-    const snap = await getDocs(collection(db, 'people'));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    try {
+      const snap = await getDocs(collection(db, 'people'));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.error('Firebase error:', e);
+      return [];
+    }
   }
 
   function renderCards(people) {
     namesGrid.innerHTML = '';
     namesGrid.classList.toggle('names-edit-mode', editMode);
+
+    if (people.length === 0 && !editMode) {
+      namesGrid.innerHTML = '<p style="color:var(--text2);text-align:center;grid-column:1/-1;padding:40px 0">No people added yet. Click ✎ Edit to add.</p>';
+      return;
+    }
 
     people.forEach((person) => {
       const card = document.createElement('div');
