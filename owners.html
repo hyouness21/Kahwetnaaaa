@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahwetna - Owners</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">KAHWETNA</span>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="availability.html">Availability</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="owners.html">Owners</a></li>
+        <li><a href="names.html">Names</a></li>
+        <li><a href="shohada.html">Shohada</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="owners-page">
+
+    <div class="owners-grid">
+
+      <div class="owner-card" data-name="Owner 1" data-img="images/logo.jpeg">
+        <img src="images/logo.jpeg" alt="Owner 1" />
+        <span>Hadi Reslan</span>
+      </div>
+
+      <div class="owner-card" data-name="Owner 2" data-img="images/logo.jpeg">
+        <img src="images/logo.jpeg" alt="Owner 2" />
+        <span>Ali Akhdar</span>
+      </div>
+
+    </div>
+
+    <!-- Popup -->
+    <div class="owner-overlay" id="ownerOverlay">
+      <div class="owner-popup">
+        <button class="popup-close" id="ownerPopupClose">✕</button>
+        <img class="owner-popup-img" id="ownerPopupImg" src="" alt="" />
+        <h2 class="owner-popup-name" id="ownerPopupName"></h2>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahwetna - Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">KAHWETNA</span>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="availability.html">Availability</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="owners.html">Owners</a></li>
+        <li><a href="names.html">Names</a></li>
+        <li><a href="shohada.html">Shohada</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="games-page">
+
+    <div class="games-grid">
+      <div class="game-card" data-game="ps">
+        <span class="game-icon">🎮</span>
+        <span>PS</span>
+      </div>
+      <div class="game-card" data-game="cattan">
+        <span class="game-icon">🏝️</span>
+        <span>Cattan</span>
+      </div>
+      <div class="game-card" data-game="monopoly">
+        <span class="game-icon">🎩</span>
+        <span>Monopoly</span>
+      </div>
+    </div>
+
+    <!-- Standings Popup -->
+    <div class="game-overlay" id="gameOverlay">
+      <div class="game-popup">
+        <button class="popup-close" id="gamePopupClose">✕</button>
+        <h2 class="popup-title" id="gamePopupTitle"></h2>
+
+        <!-- Standings view -->
+        <div id="standingsView">
+          <ol class="standings-list" id="standingsList"></ol>
+          <button class="edit-btn" id="editBtn">Edit Standings</button>
+        </div>
+
+        <!-- Password prompt -->
+        <div id="passwordView" class="hidden">
+          <p class="password-label">Enter password to edit:</p>
+          <input type="password" id="passwordInput" class="password-input" placeholder="Password" />
+          <p class="password-error hidden" id="passwordError">Wrong password, try again.</p>
+          <button class="confirm-btn" id="confirmPasswordBtn">Confirm</button>
+        </div>
+
+        <!-- Edit form (drag to reorder) -->
+        <div id="editView" class="hidden">
+          <p class="password-label">Drag to reorder · Edit names · Add players:</p>
+          <ul class="drag-list" id="dragList"></ul>
+          <button class="add-player-btn" id="addPlayerBtn">+ Add Player</button>
+          <button class="confirm-btn" id="saveBtn">Save</button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>

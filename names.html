@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahwetna - Names</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">KAHWETNA</span>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="availability.html">Availability</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="owners.html">Owners</a></li>
+        <li><a href="names.html">Names</a></li>
+        <li><a href="shohada.html">Shohada</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="names-page">
+
+    <div class="names-top-bar">
+      <button class="names-edit-btn" id="namesEditBtn">✎ Edit</button>
+    </div>
+
+    <div class="names-grid" id="namesGrid"></div>
+
+    <!-- View Popup -->
+    <div class="person-overlay" id="personOverlay">
+      <div class="person-popup">
+        <button class="popup-close" id="personPopupClose">✕</button>
+        <h2 class="person-popup-name" id="personPopupName"></h2>
+        <p class="person-popup-about" id="personPopupAbout"></p>
+      </div>
+    </div>
+
+    <!-- Password Popup -->
+    <div class="person-overlay" id="namesPasswordOverlay">
+      <div class="person-popup">
+        <button class="popup-close" id="namesPasswordClose">✕</button>
+        <h2 class="person-popup-name">Enter Password</h2>
+        <input type="password" class="password-input" id="namesPasswordInput" placeholder="Password" style="margin-top:16px" />
+        <p class="password-error hidden" id="namesPasswordError">Wrong password, try again.</p>
+        <button class="confirm-btn" id="namesPasswordConfirm" style="margin-top:10px">Confirm</button>
+      </div>
+    </div>
+
+    <!-- Edit Person Popup -->
+    <div class="person-overlay" id="editPersonOverlay">
+      <div class="person-popup">
+        <button class="popup-close" id="editPersonClose">✕</button>
+        <h2 class="person-popup-name" id="editPersonTitle">Edit Person</h2>
+
+        <div class="edit-person-img-wrap">
+          <img id="editPersonPreview" src="" alt="" />
+          <label class="change-photo-btn">
+            Change Photo
+            <input type="file" id="editPersonFile" accept="image/*" style="display:none" />
+          </label>
+        </div>
+
+        <input type="text" class="password-input" id="editPersonName" placeholder="Name" style="margin-top:14px" />
+        <textarea class="password-input" id="editPersonAbout" placeholder="About" rows="4" style="margin-top:10px;resize:vertical"></textarea>
+        <button class="confirm-btn" id="editPersonSave" style="margin-top:12px">Save</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>

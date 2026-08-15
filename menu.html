@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahwetna - Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">KAHWETNA</span>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="availability.html">Availability</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="owners.html">Owners</a></li>
+        <li><a href="names.html">Names</a></li>
+        <li><a href="shohada.html">Shohada</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="menu-page">
+
+    <div class="menu-wrapper">
+      <div class="menu-top-bar">
+        <button class="names-edit-btn" id="menuEditBtn">✎ Edit</button>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
+
+    <!-- Category Popup -->
+    <div class="menu-overlay" id="menuOverlay">
+      <div class="menu-popup">
+        <button class="popup-close" id="popupClose">✕</button>
+        <h2 class="popup-title" id="popupTitle"></h2>
+        <ul class="popup-list" id="popupList"></ul>
+        <div id="menuItemEditArea" class="hidden">
+          <div class="log-form" style="margin-top:14px">
+            <input type="text" id="newItemInput" class="opener-input" placeholder="New item..." />
+            <button id="addItemBtn" class="log-btn">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Popup -->
+    <div class="menu-overlay" id="menuPasswordOverlay">
+      <div class="menu-popup" style="max-width:360px">
+        <button class="popup-close" id="menuPasswordClose">✕</button>
+        <h2 class="popup-title">Password</h2>
+        <input type="password" class="password-input" id="menuPasswordInput" placeholder="Enter password..." />
+        <p class="password-error hidden" id="menuPasswordError">Wrong password, try again.</p>
+        <button class="confirm-btn" id="menuPasswordConfirm">Confirm</button>
+      </div>
+    </div>
+
+    <!-- Add Category Popup -->
+    <div class="menu-overlay" id="addCategoryOverlay">
+      <div class="menu-popup" style="max-width:360px">
+        <button class="popup-close" id="addCategoryClose">✕</button>
+        <h2 class="popup-title">New Category</h2>
+        <input type="text" class="password-input" id="newCategoryName" placeholder="Category name..." />
+        <input type="text" class="password-input" id="newCategoryIcon" placeholder="Icon (emoji)..." style="margin-top:10px" />
+        <button class="confirm-btn" id="addCategoryConfirm">Add</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>

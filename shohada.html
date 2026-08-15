@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahwetna - Shohada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">KAHWETNA</span>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="availability.html">Availability</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="owners.html">Owners</a></li>
+        <li><a href="names.html">Names</a></li>
+        <li><a href="shohada.html">Shohada</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="shohada-page">
+    <div class="shohada-names">
+      <p class="shohada-name" data-name="Haidar Wehbe" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Haidar Wehbe</p>
+      <p class="shohada-name" data-name="Ali Safeideen" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Ali Safeideen</p>
+      <p class="shohada-name" data-name="Yasser Kashani" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Yasser Kashani</p>
+    </div>
+
+    <!-- Popup -->
+    <div class="person-overlay" id="shohadaOverlay">
+      <div class="person-popup">
+        <button class="popup-close" id="shohadaClose">✕</button>
+        <h2 class="person-popup-name" id="shohadaName"></h2>
+        <div class="shohada-info">
+          <div class="shohada-info-row">
+            <span class="shohada-info-label">Born</span>
+            <span class="shohada-info-value" id="shohadaBorn"></span>
+          </div>
+          <div class="shohada-info-row">
+            <span class="shohada-info-label">Martyred</span>
+            <span class="shohada-info-value" id="shohadaMartyred"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
