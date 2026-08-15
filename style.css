@@ -405,11 +405,32 @@ header {
   color: var(--gold);
 }
 
+.menu-add-item-form {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.menu-add-item-form .opener-input { flex: 1; min-width: 80px; }
+.menu-price-input { max-width: 90px !important; flex: 0 0 90px !important; }
+
 .menu-item-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.menu-item-name { flex: 1; }
+
+.menu-item-price {
+  color: var(--gold);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .menu-item-delete {

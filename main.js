@@ -160,6 +160,7 @@ const popupList           = document.getElementById('popupList');
 const popupClose          = document.getElementById('popupClose');
 const menuItemEditArea    = document.getElementById('menuItemEditArea');
 const newItemInput        = document.getElementById('newItemInput');
+const newItemPrice        = document.getElementById('newItemPrice');
 const addItemBtn          = document.getElementById('addItemBtn');
 const menuPasswordOverlay = document.getElementById('menuPasswordOverlay');
 const menuPasswordClose   = document.getElementById('menuPasswordClose');
@@ -199,11 +200,16 @@ if (menuGrid) {
     if (!cat.items || cat.items.length === 0) {
       popupList.innerHTML = '<li style="color:var(--text2);list-style:none;text-align:center">No items yet.</li>';
     } else {
-      popupList.innerHTML = cat.items.map((item, i) => `
+      popupList.innerHTML = cat.items.map((item, i) => {
+        const name  = typeof item === 'string' ? item : item.name;
+        const price = typeof item === 'string' ? '' : (item.price || '');
+        return `
         <li class="menu-item-row">
-          <span>${item}</span>
+          <span class="menu-item-name">${name}</span>
+          ${price ? `<span class="menu-item-price">${price}</span>` : ''}
           ${menuEditMode ? `<button class="menu-item-delete" data-item="${i}">✕</button>` : ''}
-        </li>`).join('');
+        </li>`;
+      }).join('');
     }
     if (menuEditMode) {
       popupList.querySelectorAll('.menu-item-delete').forEach(btn => {
@@ -223,6 +229,7 @@ if (menuGrid) {
     popupTitle.textContent = menu[index].title;
     menuItemEditArea.classList.toggle('hidden', !menuEditMode);
     newItemInput.value = '';
+    newItemPrice.value = '';
     renderPopupItems(menu, index);
     overlay.classList.add('open');
   }
@@ -269,16 +276,19 @@ if (menuGrid) {
   }
 
   addItemBtn.addEventListener('click', async () => {
-    const val = newItemInput.value.trim();
-    if (!val) return;
+    const name  = newItemInput.value.trim();
+    const price = newItemPrice.value.trim();
+    if (!name) return;
     const menu = await getMenu();
-    menu[currentCategoryIndex].items.push(val);
+    menu[currentCategoryIndex].items.push({ name, price });
     await saveMenu(menu);
     newItemInput.value = '';
+    newItemPrice.value = '';
     renderPopupItems(menu, currentCategoryIndex);
   });
 
-  newItemInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addItemBtn.click(); });
+  newItemInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') newItemPrice.focus(); });
+  newItemPrice.addEventListener('keydown', (e) => { if (e.key === 'Enter') addItemBtn.click(); });
   popupClose.addEventListener('click', () => overlay.classList.remove('open'));
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
 
