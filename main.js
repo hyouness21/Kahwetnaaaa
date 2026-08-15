@@ -34,6 +34,123 @@ async function compressImage(base64, maxSize = 400) {
   });
 }
 
+// ── Image Crop/Position Editor ──
+let _cropEl = null, _cropResolve = null;
+let _cropOffX = 0, _cropOffY = 0, _cropScale = 1;
+const _V = 280, _O = 400;
+
+function _cropImg() { return document.getElementById('_cropImg'); }
+
+function _applyTransform() {
+  _cropImg().style.transform = `translate(${_cropOffX}px,${_cropOffY}px) scale(${_cropScale})`;
+}
+
+function _renderCropOutput() {
+  const img = _cropImg();
+  const canvas = document.createElement('canvas');
+  canvas.width = _O; canvas.height = _O;
+  const r = _O / _V;
+  canvas.getContext('2d').drawImage(img, _cropOffX * r, _cropOffY * r, img.naturalWidth * _cropScale * r, img.naturalHeight * _cropScale * r);
+  return canvas.toDataURL('image/jpeg', 0.85);
+}
+
+function _closeCrop(result) {
+  _cropEl.classList.remove('open');
+  if (_cropResolve) { _cropResolve(result); _cropResolve = null; }
+}
+
+function openCropEditor(src) {
+  if (!_cropEl) {
+    _cropEl = document.createElement('div');
+    _cropEl.className = 'crop-overlay';
+    _cropEl.innerHTML = `
+      <div class="crop-popup">
+        <h3 class="crop-title">Position Photo</h3>
+        <div class="crop-viewport" id="_cropViewport">
+          <img id="_cropImg" draggable="false" />
+        </div>
+        <p class="crop-hint">Drag to reposition · Scroll to zoom</p>
+        <div class="crop-actions">
+          <button id="_cropCancel" class="crop-btn-cancel">Cancel</button>
+          <button id="_cropApply" class="crop-btn-apply">Apply</button>
+        </div>
+      </div>`;
+    document.body.appendChild(_cropEl);
+
+    const vp = _cropEl.querySelector('#_cropViewport');
+
+    let dragging = false, mx0, my0, ox0, oy0;
+    vp.addEventListener('mousedown', e => {
+      dragging = true; mx0 = e.clientX; my0 = e.clientY; ox0 = _cropOffX; oy0 = _cropOffY;
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      _cropOffX = ox0 + e.clientX - mx0;
+      _cropOffY = oy0 + e.clientY - my0;
+      _applyTransform();
+    });
+    window.addEventListener('mouseup', () => { dragging = false; });
+
+    vp.addEventListener('wheel', e => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 1.1 : 0.9;
+      const cx = (_V / 2 - _cropOffX) / _cropScale;
+      const cy = (_V / 2 - _cropOffY) / _cropScale;
+      _cropScale = Math.max(0.2, Math.min(8, _cropScale * delta));
+      _cropOffX = _V / 2 - cx * _cropScale;
+      _cropOffY = _V / 2 - cy * _cropScale;
+      _applyTransform();
+    }, { passive: false });
+
+    let t0x, t0y, tox, toy, tDist;
+    vp.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) {
+        t0x = e.touches[0].clientX; t0y = e.touches[0].clientY; tox = _cropOffX; toy = _cropOffY;
+      } else if (e.touches.length === 2) {
+        tDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      }
+      e.preventDefault();
+    }, { passive: false });
+
+    vp.addEventListener('touchmove', e => {
+      if (e.touches.length === 1) {
+        _cropOffX = tox + e.touches[0].clientX - t0x;
+        _cropOffY = toy + e.touches[0].clientY - t0y;
+      } else if (e.touches.length === 2) {
+        const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        const cx = (_V / 2 - _cropOffX) / _cropScale;
+        const cy = (_V / 2 - _cropOffY) / _cropScale;
+        _cropScale = Math.max(0.2, Math.min(8, _cropScale * (d / tDist)));
+        _cropOffX = _V / 2 - cx * _cropScale;
+        _cropOffY = _V / 2 - cy * _cropScale;
+        tDist = d;
+        t0x = e.touches[0].clientX; t0y = e.touches[0].clientY; tox = _cropOffX; toy = _cropOffY;
+      }
+      _applyTransform();
+      e.preventDefault();
+    }, { passive: false });
+
+    _cropEl.querySelector('#_cropApply').addEventListener('click', () => _closeCrop(_renderCropOutput()));
+    _cropEl.querySelector('#_cropCancel').addEventListener('click', () => _closeCrop(null));
+    _cropEl.addEventListener('click', e => { if (e.target === _cropEl) _closeCrop(null); });
+  }
+
+  return new Promise(resolve => {
+    _cropResolve = resolve;
+    const img = _cropImg();
+    img.onload = () => {
+      _cropScale = Math.max(_V / img.naturalWidth, _V / img.naturalHeight);
+      _cropOffX = (_V - img.naturalWidth * _cropScale) / 2;
+      _cropOffY = (_V - img.naturalHeight * _cropScale) / 2;
+      _applyTransform();
+      _cropEl.classList.add('open');
+    };
+    img.src = '';
+    img.src = src;
+  });
+}
+
 // ── Menu Page ──
 const menuGrid            = document.getElementById('menuGrid');
 const menuEditBtn         = document.getElementById('menuEditBtn');
@@ -413,7 +530,8 @@ if (namesGrid) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async (e) => {
-      editPersonPreview.src = await compressImage(e.target.result);
+      const result = await openCropEditor(e.target.result);
+      if (result) editPersonPreview.src = result;
     };
     reader.readAsDataURL(file);
   });
@@ -589,22 +707,112 @@ if (logOpenBtn) {
 }
 
 // ── Owners Page ──
-const ownerOverlay    = document.getElementById('ownerOverlay');
-const ownerPopupClose = document.getElementById('ownerPopupClose');
-const ownerPopupImg   = document.getElementById('ownerPopupImg');
-const ownerPopupName  = document.getElementById('ownerPopupName');
+const ownersGrid             = document.getElementById('ownersGrid');
+const ownerOverlay           = document.getElementById('ownerOverlay');
+const ownerPopupClose        = document.getElementById('ownerPopupClose');
+const ownerPopupImg          = document.getElementById('ownerPopupImg');
+const ownerPopupName         = document.getElementById('ownerPopupName');
+const ownersEditBtn          = document.getElementById('ownersEditBtn');
+const ownersPasswordOverlay  = document.getElementById('ownersPasswordOverlay');
+const ownersPasswordClose    = document.getElementById('ownersPasswordClose');
+const ownersPasswordInput    = document.getElementById('ownersPasswordInput');
+const ownersPasswordError    = document.getElementById('ownersPasswordError');
+const ownersPasswordConfirm  = document.getElementById('ownersPasswordConfirm');
+const ownerFileInput         = document.getElementById('ownerFileInput');
 
-if (ownerOverlay) {
-  document.querySelectorAll('.owner-card').forEach(card => {
-    card.addEventListener('click', () => {
-      ownerPopupImg.src          = card.dataset.img;
-      ownerPopupImg.alt          = card.dataset.name;
-      ownerPopupName.textContent = card.dataset.name;
-      ownerOverlay.classList.add('open');
+if (ownersGrid) {
+  const OWNERS_PASSWORD = '1234';
+  let ownersEditMode = false;
+  let changingOwnerId = null;
+
+  const defaultOwners = [
+    { id: 'hadi', name: 'Hadi Reslan', img: 'images/logo.jpeg' },
+    { id: 'ali',  name: 'Ali Akhdar',  img: 'images/akhdar.jpeg' }
+  ];
+
+  async function getOwners() {
+    const data = await fsGet('data/owners');
+    return data ? data.owners : defaultOwners;
+  }
+
+  async function saveOwners(owners) {
+    await fsSet('data/owners', { owners });
+  }
+
+  function renderOwners(owners) {
+    ownersGrid.innerHTML = '';
+    owners.forEach(owner => {
+      const card = document.createElement('div');
+      card.className = 'owner-card';
+      card.innerHTML = `
+        <img src="${owner.img}" alt="${owner.name}" />
+        <span>${owner.name}</span>
+        ${ownersEditMode ? `<button class="owner-change-photo-btn">📷 Change Photo</button>` : ''}`;
+
+      if (ownersEditMode) {
+        card.querySelector('.owner-change-photo-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          changingOwnerId = owner.id;
+          ownerFileInput.value = '';
+          ownerFileInput.click();
+        });
+      } else {
+        card.addEventListener('click', () => {
+          ownerPopupImg.src          = owner.img;
+          ownerPopupImg.alt          = owner.name;
+          ownerPopupName.textContent = owner.name;
+          ownerOverlay.classList.add('open');
+        });
+      }
+      ownersGrid.appendChild(card);
     });
+  }
+
+  ownerFileInput.addEventListener('change', () => {
+    const file = ownerFileInput.files[0];
+    if (!file || !changingOwnerId) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const result = await openCropEditor(e.target.result);
+      if (!result) return;
+      const owners = await getOwners();
+      const owner = owners.find(o => o.id === changingOwnerId);
+      if (owner) owner.img = result;
+      await saveOwners(owners);
+      renderOwners(owners);
+    };
+    reader.readAsDataURL(file);
   });
+
+  ownersEditBtn.addEventListener('click', () => {
+    if (ownersEditMode) {
+      ownersEditMode = false;
+      ownersEditBtn.textContent = '✎ Edit';
+      getOwners().then(renderOwners);
+    } else {
+      ownersPasswordInput.value = '';
+      ownersPasswordError.classList.add('hidden');
+      ownersPasswordOverlay.classList.add('open');
+    }
+  });
+
+  ownersPasswordConfirm.addEventListener('click', () => {
+    if (ownersPasswordInput.value === OWNERS_PASSWORD) {
+      ownersPasswordOverlay.classList.remove('open');
+      ownersEditMode = true;
+      ownersEditBtn.textContent = '✔ Done';
+      getOwners().then(renderOwners);
+    } else {
+      ownersPasswordError.classList.remove('hidden');
+    }
+  });
+
+  ownersPasswordClose.addEventListener('click', () => ownersPasswordOverlay.classList.remove('open'));
+  ownersPasswordOverlay.addEventListener('click', (e) => { if (e.target === ownersPasswordOverlay) ownersPasswordOverlay.classList.remove('open'); });
   ownerPopupClose.addEventListener('click', () => ownerOverlay.classList.remove('open'));
   ownerOverlay.addEventListener('click', (e) => { if (e.target === ownerOverlay) ownerOverlay.classList.remove('open'); });
+
+  getOwners().then(renderOwners);
 }
 
 // ── Shohada Page ──
