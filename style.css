@@ -86,6 +86,64 @@
 }
 .crop-btn-apply:hover { background: var(--gold2); }
 
+/* ── Admin Controls ── */
+#menuEditBtn,
+#namesEditBtn,
+#logEditBtn,
+#ownersEditBtn,
+#shohadaEditBtn,
+#editBtn {
+  display: none !important;
+}
+
+body.admin-mode #menuEditBtn,
+body.admin-mode #namesEditBtn,
+body.admin-mode #logEditBtn,
+body.admin-mode #shohadaEditBtn {
+  display: inline-block !important;
+}
+
+body.admin-mode #ownersEditBtn,
+body.admin-mode #editBtn {
+  display: block !important;
+}
+
+.logo { cursor: pointer; }
+.logo.admin-active { text-shadow: 0 0 18px rgba(201,168,76,0.7); }
+
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+}
+.admin-overlay.open { display: flex; }
+
+.admin-popup {
+  background: var(--dark2);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 20px;
+  padding: 36px 32px;
+  width: 90%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+}
+
+.admin-popup-title {
+  font-family: 'Amiri', serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 2px;
+}
+
 /* ── Variables ── */
 :root {
   --dark1:   #0b0c1e;
@@ -1182,36 +1240,52 @@ header {
 /* ── Shohada Page ── */
 .shohada-page {
   min-height: calc(100vh - 60px);
-  background-image: url('images/shohada2.jpeg');
+  background: linear-gradient(135deg, var(--dark1) 0%, var(--dark2) 50%, #0d1b2a 100%);
   background-size: cover;
   background-position: center 35%;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   display: flex;
-  align-items: flex-end;
   justify-content: center;
-  padding-bottom: 40px;
 }
 
-.shohada-names {
+.shohada-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.shohada-page-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 20px 60px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
 }
 
-.shohada-name {
+.shohada-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 0 20px;
+  gap: 16px;
+}
+
+.shohada-arabic-title {
   font-family: 'Amiri', serif;
-  font-size: 1.6rem;
-  color: #ffffff;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.8);
+  font-size: 2.2rem;
+  color: var(--gold);
   letter-spacing: 2px;
-  cursor: pointer;
-  transition: color 0.2s;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+  direction: rtl;
 }
-
-.shohada-name:hover { color: var(--gold); }
 
 .shohada-info {
   margin-top: 16px;

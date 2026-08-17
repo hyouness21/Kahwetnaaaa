@@ -36,29 +36,58 @@
   </header>
 
   <main class="shohada-page">
-    <div class="shohada-names">
-      <p class="shohada-name" data-name="Haidar Wehbe" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Haidar Wehbe</p>
-      <p class="shohada-name" data-name="Ali Safeideen" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Ali Safeideen</p>
-      <p class="shohada-name" data-name="Yasser Kashani" data-born="DD/MM/YYYY" data-martyred="DD/MM/YYYY">Yasser Kashani</p>
+
+    <div class="shohada-page-inner">
+
+      <div class="shohada-top-bar">
+        <h1 class="shohada-arabic-title">شهداؤنا عظماؤنا</h1>
+        <button class="names-edit-btn" id="shohadaEditBtn">✎ Edit</button>
+      </div>
+
+      <div class="names-grid" id="shohadaGrid"></div>
+
     </div>
 
-    <!-- Popup -->
-    <div class="person-overlay" id="shohadaOverlay">
+    <!-- View Popup -->
+    <div class="person-overlay" id="shohadaViewOverlay">
       <div class="person-popup">
-        <button class="popup-close" id="shohadaClose">✕</button>
-        <h2 class="person-popup-name" id="shohadaName"></h2>
+        <button class="popup-close" id="shohadaViewClose">✕</button>
+        <h2 class="person-popup-name" id="shohadaViewName"></h2>
         <div class="shohada-info">
           <div class="shohada-info-row">
             <span class="shohada-info-label">Born</span>
-            <span class="shohada-info-value" id="shohadaBorn"></span>
+            <span class="shohada-info-value" id="shohadaViewBorn"></span>
           </div>
           <div class="shohada-info-row">
             <span class="shohada-info-label">Martyred</span>
-            <span class="shohada-info-value" id="shohadaMartyred"></span>
+            <span class="shohada-info-value" id="shohadaViewMartyred"></span>
           </div>
         </div>
       </div>
     </div>
+
+
+    <!-- Edit Popup -->
+    <div class="person-overlay" id="shohadaEditOverlay">
+      <div class="person-popup">
+        <button class="popup-close" id="shohadaEditClose">✕</button>
+        <h2 class="person-popup-name" id="shohadaEditTitle">Add Shahid</h2>
+
+        <div class="edit-person-img-wrap">
+          <img id="shohadaEditPreview" src="images/logo.jpeg" alt="" />
+          <label class="change-photo-btn">
+            Change Photo
+            <input type="file" id="shohadaEditFile" accept="image/*" style="display:none" />
+          </label>
+        </div>
+
+        <input type="text" class="password-input" id="shohadaEditName" placeholder="Name" style="margin-top:14px" />
+        <input type="text" class="password-input" id="shohadaEditBorn" placeholder="Born (e.g. 01/01/1990)" style="margin-top:10px" />
+        <input type="text" class="password-input" id="shohadaEditMartyred" placeholder="Martyred (e.g. 01/01/2024)" style="margin-top:10px" />
+        <button class="confirm-btn" id="shohadaEditSave" style="margin-top:12px">Save</button>
+      </div>
+    </div>
+
   </main>
 
   <script type="module" src="main.js"></script>

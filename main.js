@@ -10,6 +10,65 @@ if (menuBtn) {
   });
 }
 
+// ── Admin Login (KAHWETNA logo click) ──
+(function () {
+  const ADMIN_PASS = '100200300';
+  const modal = document.createElement('div');
+  modal.className = 'admin-overlay';
+  modal.innerHTML = `
+    <div class="admin-popup">
+      <button class="popup-close" id="adminClose">✕</button>
+      <h2 class="admin-popup-title">Admin Login</h2>
+      <input type="password" class="password-input" id="adminInput" placeholder="Password..." />
+      <p class="password-error hidden" id="adminError">Wrong password.</p>
+      <button class="confirm-btn" id="adminConfirm">Login</button>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const logo  = document.querySelector('.logo');
+  const input = modal.querySelector('#adminInput');
+  const error = modal.querySelector('#adminError');
+
+  function setAdmin(on) {
+    document.body.classList.toggle('admin-mode', on);
+    logo.classList.toggle('admin-active', on);
+    if (on) {
+      sessionStorage.setItem('admin', '1');
+    } else {
+      sessionStorage.removeItem('admin');
+      location.reload();
+    }
+  }
+
+  if (sessionStorage.getItem('admin') === '1') setAdmin(true);
+
+  logo.style.cursor = 'pointer';
+  logo.addEventListener('click', () => {
+    if (document.body.classList.contains('admin-mode')) {
+      setAdmin(false);
+    } else {
+      input.value = '';
+      error.classList.add('hidden');
+      modal.classList.add('open');
+      setTimeout(() => input.focus(), 80);
+    }
+  });
+
+  function tryLogin() {
+    if (input.value === ADMIN_PASS) {
+      modal.classList.remove('open');
+      setAdmin(true);
+    } else {
+      error.classList.remove('hidden');
+    }
+  }
+
+  modal.querySelector('#adminConfirm').addEventListener('click', tryLogin);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+  modal.querySelector('#adminClose').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+})();
+
 // ── Helpers ──
 async function fsGet(docPath) {
   const snap = await getDoc(doc(db, ...docPath.split('/')));
@@ -162,11 +221,6 @@ const menuItemEditArea    = document.getElementById('menuItemEditArea');
 const newItemInput        = document.getElementById('newItemInput');
 const newItemPrice        = document.getElementById('newItemPrice');
 const addItemBtn          = document.getElementById('addItemBtn');
-const menuPasswordOverlay = document.getElementById('menuPasswordOverlay');
-const menuPasswordClose   = document.getElementById('menuPasswordClose');
-const menuPasswordInput   = document.getElementById('menuPasswordInput');
-const menuPasswordError   = document.getElementById('menuPasswordError');
-const menuPasswordConfirm = document.getElementById('menuPasswordConfirm');
 const addCategoryOverlay  = document.getElementById('addCategoryOverlay');
 const addCategoryClose    = document.getElementById('addCategoryClose');
 const newCategoryName     = document.getElementById('newCategoryName');
@@ -174,7 +228,6 @@ const newCategoryIcon     = document.getElementById('newCategoryIcon');
 const addCategoryConfirm  = document.getElementById('addCategoryConfirm');
 
 if (menuGrid) {
-  const MENU_PASSWORD = '1234';
   let menuEditMode = false;
   let currentCategoryIndex = null;
 
@@ -293,30 +346,10 @@ if (menuGrid) {
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
 
   menuEditBtn.addEventListener('click', () => {
-    if (menuEditMode) {
-      menuEditMode = false;
-      menuEditBtn.textContent = '✎ Edit';
-      renderGrid();
-    } else {
-      menuPasswordInput.value = '';
-      menuPasswordError.classList.add('hidden');
-      menuPasswordOverlay.classList.add('open');
-    }
+    menuEditMode = !menuEditMode;
+    menuEditBtn.textContent = menuEditMode ? '✔ Done' : '✎ Edit';
+    renderGrid();
   });
-
-  menuPasswordConfirm.addEventListener('click', () => {
-    if (menuPasswordInput.value === MENU_PASSWORD) {
-      menuPasswordOverlay.classList.remove('open');
-      menuEditMode = true;
-      menuEditBtn.textContent = '✔ Done';
-      renderGrid();
-    } else {
-      menuPasswordError.classList.remove('hidden');
-    }
-  });
-
-  menuPasswordClose.addEventListener('click', () => menuPasswordOverlay.classList.remove('open'));
-  menuPasswordOverlay.addEventListener('click', (e) => { if (e.target === menuPasswordOverlay) menuPasswordOverlay.classList.remove('open'); });
 
   addCategoryConfirm.addEventListener('click', async () => {
     const name = newCategoryName.value.trim();
@@ -336,21 +369,16 @@ if (menuGrid) {
 }
 
 // ── Games Page ──
-const GAMES_PASSWORD = '1234';
-const gameOverlay        = document.getElementById('gameOverlay');
-const gamePopupClose     = document.getElementById('gamePopupClose');
-const gamePopupTitle     = document.getElementById('gamePopupTitle');
-const standingsList      = document.getElementById('standingsList');
-const editBtn            = document.getElementById('editBtn');
-const standingsView      = document.getElementById('standingsView');
-const passwordView       = document.getElementById('passwordView');
-const editView           = document.getElementById('editView');
-const passwordInput      = document.getElementById('passwordInput');
-const passwordError      = document.getElementById('passwordError');
-const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
-const saveBtn            = document.getElementById('saveBtn');
-const addPlayerBtn       = document.getElementById('addPlayerBtn');
-const dragList           = document.getElementById('dragList');
+const gameOverlay    = document.getElementById('gameOverlay');
+const gamePopupClose = document.getElementById('gamePopupClose');
+const gamePopupTitle = document.getElementById('gamePopupTitle');
+const standingsList  = document.getElementById('standingsList');
+const editBtn        = document.getElementById('editBtn');
+const standingsView  = document.getElementById('standingsView');
+const editView       = document.getElementById('editView');
+const saveBtn        = document.getElementById('saveBtn');
+const addPlayerBtn   = document.getElementById('addPlayerBtn');
+const dragList       = document.getElementById('dragList');
 
 if (gameOverlay) {
   let currentGame = null;
@@ -371,7 +399,6 @@ if (gameOverlay) {
 
   async function showStandings() {
     standingsView.classList.remove('hidden');
-    passwordView.classList.add('hidden');
     editView.classList.add('hidden');
     const standings = await getStandings();
     const list = standings[currentGame] || [];
@@ -392,7 +419,6 @@ if (gameOverlay) {
   }
 
   async function showEditView() {
-    passwordView.classList.add('hidden');
     editView.classList.remove('hidden');
     dragList.innerHTML = '';
     const standings = await getStandings();
@@ -416,17 +442,7 @@ if (gameOverlay) {
   gameOverlay.addEventListener('click', (e) => { if (e.target === gameOverlay) gameOverlay.classList.remove('open'); });
   editBtn.addEventListener('click', () => {
     standingsView.classList.add('hidden');
-    passwordView.classList.remove('hidden');
-    passwordInput.focus();
-  });
-
-  confirmPasswordBtn.addEventListener('click', () => {
-    if (passwordInput.value === GAMES_PASSWORD) {
-      passwordError.classList.add('hidden');
-      showEditView();
-    } else {
-      passwordError.classList.remove('hidden');
-    }
+    showEditView();
   });
 
   addPlayerBtn.addEventListener('click', () => addPlayerRow(''));
@@ -448,11 +464,6 @@ const personOverlay         = document.getElementById('personOverlay');
 const personPopupClose      = document.getElementById('personPopupClose');
 const personPopupName       = document.getElementById('personPopupName');
 const personPopupAbout      = document.getElementById('personPopupAbout');
-const namesPasswordOverlay  = document.getElementById('namesPasswordOverlay');
-const namesPasswordClose    = document.getElementById('namesPasswordClose');
-const namesPasswordInput    = document.getElementById('namesPasswordInput');
-const namesPasswordError    = document.getElementById('namesPasswordError');
-const namesPasswordConfirm  = document.getElementById('namesPasswordConfirm');
 const editPersonOverlay     = document.getElementById('editPersonOverlay');
 const editPersonClose       = document.getElementById('editPersonClose');
 const editPersonTitle       = document.getElementById('editPersonTitle');
@@ -463,7 +474,6 @@ const editPersonAbout       = document.getElementById('editPersonAbout');
 const editPersonSave        = document.getElementById('editPersonSave');
 
 if (namesGrid) {
-  const NAMES_PASSWORD = '1234';
   let editMode = false;
   let editingDocId = null;
 
@@ -566,30 +576,11 @@ if (namesGrid) {
   editPersonOverlay.addEventListener('click', (e) => { if (e.target === editPersonOverlay) editPersonOverlay.classList.remove('open'); });
 
   namesEditBtn.addEventListener('click', () => {
-    if (editMode) {
-      editMode = false;
-      namesEditBtn.textContent = '✎ Edit';
-      getPeople().then(renderCards);
-    } else {
-      namesPasswordInput.value = '';
-      namesPasswordError.classList.add('hidden');
-      namesPasswordOverlay.classList.add('open');
-    }
+    editMode = !editMode;
+    namesEditBtn.textContent = editMode ? '✔ Done' : '✎ Edit';
+    getPeople().then(renderCards);
   });
 
-  namesPasswordConfirm.addEventListener('click', () => {
-    if (namesPasswordInput.value === NAMES_PASSWORD) {
-      namesPasswordOverlay.classList.remove('open');
-      editMode = true;
-      namesEditBtn.textContent = '✔ Done';
-      getPeople().then(renderCards);
-    } else {
-      namesPasswordError.classList.remove('hidden');
-    }
-  });
-
-  namesPasswordClose.addEventListener('click', () => namesPasswordOverlay.classList.remove('open'));
-  namesPasswordOverlay.addEventListener('click', (e) => { if (e.target === namesPasswordOverlay) namesPasswordOverlay.classList.remove('open'); });
   personPopupClose.addEventListener('click', () => personOverlay.classList.remove('open'));
   personOverlay.addEventListener('click', (e) => { if (e.target === personOverlay) personOverlay.classList.remove('open'); });
 
@@ -601,14 +592,8 @@ const logOpenBtn         = document.getElementById('logOpenBtn');
 const openerName         = document.getElementById('openerName');
 const logHistory         = document.getElementById('logHistory');
 const logEditBtn         = document.getElementById('logEditBtn');
-const logPasswordOverlay = document.getElementById('logPasswordOverlay');
-const logPasswordClose   = document.getElementById('logPasswordClose');
-const logPasswordInput   = document.getElementById('logPasswordInput');
-const logPasswordError   = document.getElementById('logPasswordError');
-const logPasswordConfirm = document.getElementById('logPasswordConfirm');
 
 if (logOpenBtn) {
-  const LOG_PASSWORD = '1234';
   let logEditMode = false;
 
   async function getLog() {
@@ -688,30 +673,10 @@ if (logOpenBtn) {
   openerName.addEventListener('keydown', (e) => { if (e.key === 'Enter') logOpenBtn.click(); });
 
   logEditBtn.addEventListener('click', () => {
-    if (logEditMode) {
-      logEditMode = false;
-      logEditBtn.textContent = '✎ Edit';
-      renderLog();
-    } else {
-      logPasswordInput.value = '';
-      logPasswordError.classList.add('hidden');
-      logPasswordOverlay.classList.add('open');
-    }
+    logEditMode = !logEditMode;
+    logEditBtn.textContent = logEditMode ? '✔ Done' : '✎ Edit';
+    renderLog();
   });
-
-  logPasswordConfirm.addEventListener('click', () => {
-    if (logPasswordInput.value === LOG_PASSWORD) {
-      logPasswordOverlay.classList.remove('open');
-      logEditMode = true;
-      logEditBtn.textContent = '✔ Done';
-      renderLog();
-    } else {
-      logPasswordError.classList.remove('hidden');
-    }
-  });
-
-  logPasswordClose.addEventListener('click', () => logPasswordOverlay.classList.remove('open'));
-  logPasswordOverlay.addEventListener('click', (e) => { if (e.target === logPasswordOverlay) logPasswordOverlay.classList.remove('open'); });
 
   renderLog();
 }
@@ -723,15 +688,9 @@ const ownerPopupClose        = document.getElementById('ownerPopupClose');
 const ownerPopupImg          = document.getElementById('ownerPopupImg');
 const ownerPopupName         = document.getElementById('ownerPopupName');
 const ownersEditBtn          = document.getElementById('ownersEditBtn');
-const ownersPasswordOverlay  = document.getElementById('ownersPasswordOverlay');
-const ownersPasswordClose    = document.getElementById('ownersPasswordClose');
-const ownersPasswordInput    = document.getElementById('ownersPasswordInput');
-const ownersPasswordError    = document.getElementById('ownersPasswordError');
-const ownersPasswordConfirm  = document.getElementById('ownersPasswordConfirm');
 const ownerFileInput         = document.getElementById('ownerFileInput');
 
 if (ownersGrid) {
-  const OWNERS_PASSWORD = '1234';
   let ownersEditMode = false;
   let changingOwnerId = null;
 
@@ -795,30 +754,11 @@ if (ownersGrid) {
   });
 
   ownersEditBtn.addEventListener('click', () => {
-    if (ownersEditMode) {
-      ownersEditMode = false;
-      ownersEditBtn.textContent = '✎ Edit';
-      getOwners().then(renderOwners);
-    } else {
-      ownersPasswordInput.value = '';
-      ownersPasswordError.classList.add('hidden');
-      ownersPasswordOverlay.classList.add('open');
-    }
+    ownersEditMode = !ownersEditMode;
+    ownersEditBtn.textContent = ownersEditMode ? '✔ Done' : '✎ Edit';
+    getOwners().then(renderOwners);
   });
 
-  ownersPasswordConfirm.addEventListener('click', () => {
-    if (ownersPasswordInput.value === OWNERS_PASSWORD) {
-      ownersPasswordOverlay.classList.remove('open');
-      ownersEditMode = true;
-      ownersEditBtn.textContent = '✔ Done';
-      getOwners().then(renderOwners);
-    } else {
-      ownersPasswordError.classList.remove('hidden');
-    }
-  });
-
-  ownersPasswordClose.addEventListener('click', () => ownersPasswordOverlay.classList.remove('open'));
-  ownersPasswordOverlay.addEventListener('click', (e) => { if (e.target === ownersPasswordOverlay) ownersPasswordOverlay.classList.remove('open'); });
   ownerPopupClose.addEventListener('click', () => ownerOverlay.classList.remove('open'));
   ownerOverlay.addEventListener('click', (e) => { if (e.target === ownerOverlay) ownerOverlay.classList.remove('open'); });
 
@@ -826,21 +766,133 @@ if (ownersGrid) {
 }
 
 // ── Shohada Page ──
-const shohadaOverlay  = document.getElementById('shohadaOverlay');
-const shohadaClose    = document.getElementById('shohadaClose');
-const shohadaName     = document.getElementById('shohadaName');
-const shohadaBorn     = document.getElementById('shohadaBorn');
-const shohadaMartyred = document.getElementById('shohadaMartyred');
+const shohadaGrid             = document.getElementById('shohadaGrid');
+const shohadaEditBtn          = document.getElementById('shohadaEditBtn');
+const shohadaViewOverlay      = document.getElementById('shohadaViewOverlay');
+const shohadaViewClose        = document.getElementById('shohadaViewClose');
+const shohadaViewName         = document.getElementById('shohadaViewName');
+const shohadaViewBorn         = document.getElementById('shohadaViewBorn');
+const shohadaViewMartyred     = document.getElementById('shohadaViewMartyred');
+const shohadaEditOverlay      = document.getElementById('shohadaEditOverlay');
+const shohadaEditClose        = document.getElementById('shohadaEditClose');
+const shohadaEditTitle        = document.getElementById('shohadaEditTitle');
+const shohadaEditPreview      = document.getElementById('shohadaEditPreview');
+const shohadaEditFile         = document.getElementById('shohadaEditFile');
+const shohadaEditName         = document.getElementById('shohadaEditName');
+const shohadaEditBorn         = document.getElementById('shohadaEditBorn');
+const shohadaEditMartyred     = document.getElementById('shohadaEditMartyred');
+const shohadaEditSave         = document.getElementById('shohadaEditSave');
 
-if (shohadaOverlay) {
-  document.querySelectorAll('.shohada-name').forEach(el => {
-    el.addEventListener('click', () => {
-      shohadaName.textContent     = el.dataset.name;
-      shohadaBorn.textContent     = el.dataset.born;
-      shohadaMartyred.textContent = el.dataset.martyred;
-      shohadaOverlay.classList.add('open');
+if (shohadaGrid) {
+  let shohadaMode = false;
+  let shohadaEditingId = null;
+
+  async function getShohada() {
+    try {
+      const snap = await getDocs(collection(db, 'shohada'));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.error('Firebase error:', e);
+      return [];
+    }
+  }
+
+  function renderShohada(people) {
+    shohadaGrid.innerHTML = '';
+    shohadaGrid.classList.toggle('names-edit-mode', shohadaMode);
+
+    if (people.length === 0 && !shohadaMode) {
+      shohadaGrid.innerHTML = '<p style="color:var(--text2);text-align:center;grid-column:1/-1;padding:40px 0">No entries yet. Click ✎ Edit to add.</p>';
+      return;
+    }
+
+    people.forEach(person => {
+      const card = document.createElement('div');
+      card.className = 'person-card';
+      card.innerHTML = `
+        <button class="card-delete-btn">✕</button>
+        <button class="card-edit-btn">✎</button>
+        <img src="${person.img || 'images/logo.jpeg'}" alt="${person.name}" />
+        <span>${person.name}</span>`;
+
+      card.querySelector('.card-delete-btn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await deleteDoc(doc(db, 'shohada', person.id));
+        renderShohada(await getShohada());
+      });
+
+      card.querySelector('.card-edit-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openShohadaEdit(person);
+      });
+
+      card.addEventListener('click', () => {
+        if (shohadaMode) return;
+        shohadaViewName.textContent     = person.name;
+        shohadaViewBorn.textContent     = person.born || '—';
+        shohadaViewMartyred.textContent = person.martyred || '—';
+        shohadaViewOverlay.classList.add('open');
+      });
+
+      shohadaGrid.appendChild(card);
     });
+
+    if (shohadaMode) {
+      const addCard = document.createElement('div');
+      addCard.className = 'add-person-card';
+      addCard.innerHTML = '<span>+</span>';
+      addCard.addEventListener('click', () => openShohadaEdit(null));
+      shohadaGrid.appendChild(addCard);
+    }
+  }
+
+  function openShohadaEdit(person) {
+    shohadaEditingId              = person ? person.id : null;
+    shohadaEditTitle.textContent  = person ? 'Edit' : 'Add Shahid';
+    shohadaEditPreview.src        = person ? (person.img || 'images/logo.jpeg') : 'images/logo.jpeg';
+    shohadaEditName.value         = person ? person.name : '';
+    shohadaEditBorn.value         = person ? (person.born || '') : '';
+    shohadaEditMartyred.value     = person ? (person.martyred || '') : '';
+    shohadaEditOverlay.classList.add('open');
+  }
+
+  shohadaEditFile.addEventListener('change', () => {
+    const file = shohadaEditFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const result = await openCropEditor(e.target.result);
+      if (result) shohadaEditPreview.src = result;
+    };
+    reader.readAsDataURL(file);
   });
-  shohadaClose.addEventListener('click', () => shohadaOverlay.classList.remove('open'));
-  shohadaOverlay.addEventListener('click', (e) => { if (e.target === shohadaOverlay) shohadaOverlay.classList.remove('open'); });
+
+  shohadaEditSave.addEventListener('click', async () => {
+    const entry = {
+      name:      shohadaEditName.value.trim() || 'Unknown',
+      born:      shohadaEditBorn.value.trim(),
+      martyred:  shohadaEditMartyred.value.trim(),
+      img:       shohadaEditPreview.src
+    };
+    if (shohadaEditingId) {
+      await updateDoc(doc(db, 'shohada', shohadaEditingId), entry);
+    } else {
+      await addDoc(collection(db, 'shohada'), entry);
+    }
+    shohadaEditOverlay.classList.remove('open');
+    renderShohada(await getShohada());
+  });
+
+  shohadaEditBtn.addEventListener('click', () => {
+    shohadaMode = !shohadaMode;
+    shohadaEditBtn.textContent = shohadaMode ? '✔ Done' : '✎ Edit';
+    getShohada().then(renderShohada);
+  });
+
+  shohadaEditClose.addEventListener('click', () => shohadaEditOverlay.classList.remove('open'));
+  shohadaEditOverlay.addEventListener('click', (e) => { if (e.target === shohadaEditOverlay) shohadaEditOverlay.classList.remove('open'); });
+  shohadaViewClose.addEventListener('click', () => shohadaViewOverlay.classList.remove('open'));
+  shohadaViewOverlay.addEventListener('click', (e) => { if (e.target === shohadaViewOverlay) shohadaViewOverlay.classList.remove('open'); });
+
+  getShohada().then(renderShohada);
 }
