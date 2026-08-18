@@ -316,6 +316,9 @@ if (menuGrid) {
   }
 
   async function renderGrid() {
+    if (!menuGrid.querySelector('.menu-card') && !menuGrid.querySelector('.add-category-card')) {
+      menuGrid.innerHTML = HOOKAH_HTML;
+    }
     const menu = await getMenu();
     menuGrid.innerHTML = '';
     menuGrid.classList.toggle('menu-edit-mode', menuEditMode);
@@ -428,6 +431,7 @@ if (gameOverlay) {
   async function showStandings() {
     standingsView.classList.remove('hidden');
     editView.classList.add('hidden');
+    standingsList.innerHTML = `<li style="list-style:none">${HOOKAH_HTML}</li>`;
     const standings = await getStandings();
     const list = standings[currentGame] || [];
     standingsList.innerHTML = list.slice(0, 10)
@@ -633,6 +637,7 @@ if (logOpenBtn) {
   }
 
   async function renderLog() {
+    if (!logHistory.querySelector('.log-entry')) logHistory.innerHTML = HOOKAH_HTML;
     const log = await getLog();
     if (log.length === 0) {
       logHistory.innerHTML = '<p class="log-empty">No openings logged yet.</p>';
@@ -737,7 +742,7 @@ if (ownersGrid) {
 
   function renderOwners(owners) {
     ownersGrid.innerHTML = '';
-    owners.forEach(owner => {
+  owners.forEach(owner => {
       const card = document.createElement('div');
       card.className = 'owner-card';
       card.innerHTML = `
@@ -789,6 +794,7 @@ if (ownersGrid) {
   ownerPopupClose.addEventListener('click', () => ownerOverlay.classList.remove('open'));
   ownerOverlay.addEventListener('click', (e) => { if (e.target === ownerOverlay) ownerOverlay.classList.remove('open'); });
 
+  ownersGrid.innerHTML = HOOKAH_HTML;
   getOwners().then(renderOwners);
 }
 
