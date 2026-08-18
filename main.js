@@ -69,6 +69,34 @@ if (menuBtn) {
   modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
 })();
 
+// ── Hookah Loader ──
+const HOOKAH_HTML = `<div class="hookah-loader">
+  <svg class="hookah-svg" viewBox="0 0 80 170" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="36" cy="18" r="3" fill="rgba(201,168,76,0.7)">
+      <animate attributeName="cy" values="18;-18" dur="2s" repeatCount="indefinite" begin="0s"/>
+      <animate attributeName="r" values="3;9" dur="2s" repeatCount="indefinite" begin="0s"/>
+      <animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle cx="42" cy="18" r="3" fill="rgba(201,168,76,0.7)">
+      <animate attributeName="cy" values="18;-18" dur="2s" repeatCount="indefinite" begin="0.65s"/>
+      <animate attributeName="r" values="3;9" dur="2s" repeatCount="indefinite" begin="0.65s"/>
+      <animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite" begin="0.65s"/>
+    </circle>
+    <circle cx="39" cy="18" r="3" fill="rgba(201,168,76,0.7)">
+      <animate attributeName="cy" values="18;-18" dur="2s" repeatCount="indefinite" begin="1.3s"/>
+      <animate attributeName="r" values="3;9" dur="2s" repeatCount="indefinite" begin="1.3s"/>
+      <animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite" begin="1.3s"/>
+    </circle>
+    <rect x="22" y="22" width="36" height="16" rx="6" fill="#c9a84c"/>
+    <rect x="36" y="38" width="8" height="38" fill="#c9a84c"/>
+    <ellipse cx="40" cy="110" rx="28" ry="30" fill="#c9a84c" opacity="0.85"/>
+    <ellipse cx="30" cy="98" rx="8" ry="11" fill="rgba(255,255,255,0.08)"/>
+    <rect x="10" y="136" width="60" height="12" rx="6" fill="#c9a84c" opacity="0.75"/>
+    <path d="M40,58 C18,62 8,78 4,100" stroke="#c9a84c" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="4" cy="100" rx="5" ry="3.5" fill="#c9a84c"/>
+  </svg>
+</div>`;
+
 // ── Helpers ──
 async function fsGet(docPath) {
   const snap = await getDoc(doc(db, ...docPath.split('/')));
@@ -96,7 +124,7 @@ async function compressImage(base64, maxSize = 400) {
 // ── Image Crop/Position Editor ──
 let _cropEl = null, _cropResolve = null;
 let _cropOffX = 0, _cropOffY = 0, _cropScale = 1;
-const _V = 280, _O = 400;
+const _V = 280, _O = 200;
 
 function _cropImg() { return document.getElementById('_cropImg'); }
 
@@ -110,7 +138,7 @@ function _renderCropOutput() {
   canvas.width = _O; canvas.height = _O;
   const r = _O / _V;
   canvas.getContext('2d').drawImage(img, _cropOffX * r, _cropOffY * r, img.naturalWidth * _cropScale * r, img.naturalHeight * _cropScale * r);
-  return canvas.toDataURL('image/jpeg', 0.85);
+  return canvas.toDataURL('image/jpeg', 0.7);
 }
 
 function _closeCrop(result) {
@@ -582,6 +610,7 @@ if (namesGrid) {
   personPopupClose.addEventListener('click', () => personOverlay.classList.remove('open'));
   personOverlay.addEventListener('click', (e) => { if (e.target === personOverlay) personOverlay.classList.remove('open'); });
 
+  namesGrid.innerHTML = HOOKAH_HTML;
   getPeople().then(renderCards);
 }
 
@@ -892,5 +921,6 @@ if (shohadaGrid) {
   shohadaViewClose.addEventListener('click', () => shohadaViewOverlay.classList.remove('open'));
   shohadaViewOverlay.addEventListener('click', (e) => { if (e.target === shohadaViewOverlay) shohadaViewOverlay.classList.remove('open'); });
 
+  shohadaGrid.innerHTML = HOOKAH_HTML;
   getShohada().then(renderShohada);
 }
