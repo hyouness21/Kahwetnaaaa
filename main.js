@@ -431,8 +431,6 @@ if (gameOverlay) {
     card.addEventListener('click', () => {
       currentGame = card.dataset.game;
       gamePopupTitle.textContent = card.querySelector('span:last-child').textContent;
-      passwordInput.value = '';
-      passwordError.classList.add('hidden');
       showStandings();
       gameOverlay.classList.add('open');
     });
